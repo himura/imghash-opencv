@@ -1,23 +1,19 @@
 name:                opencv-imghash
 version:             0.1.0.0
-github:              "githubuser/opencv-imghash"
 license:             BSD-3-Clause
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2023 Author name here"
+author:              Takahiro HIMURA
+maintainer:          taka@himura.jp
+copyright:           "2023 Takahiro HIMURA"
+homepage:            https://himura.jp/gitlab/cgrepos-haskell
+git:                 git@himura.jp:cgrepos-haskell.git
 
 extra-source-files:
 - README.md
 - CHANGELOG.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+description:         Please see the README on GitHub at <https://github.com/himura/opencv-imghash#readme>
 
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/opencv-imghash#readme>
+language: GHC2021
 
 dependencies:
 - base >= 4.7 && < 5
@@ -33,19 +29,28 @@ ghc-options:
 - -Wpartial-fields
 - -Wredundant-constraints
 
+default-extensions:
+- DataKinds
+- DefaultSignatures
+- DeriveAnyClass
+- DerivingStrategies
+- DerivingVia
+- DuplicateRecordFields
+- FunctionalDependencies
+- GADTs
+- LambdaCase
+- MultiWayIf
+- OverloadedLabels
+- OverloadedRecordDot
+- OverloadedStrings
+- PackageImports
+- QuasiQuotes
+- RecordWildCards
+- StrictData
+- TypeFamilies
+
 library:
   source-dirs: src
-
-executables:
-  opencv-imghash-exe:
-    main:                Main.hs
-    source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - opencv-imghash
 
 tests:
   opencv-imghash-test:
@@ -57,3 +62,8 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - opencv-imghash
+
+
+
+
+
