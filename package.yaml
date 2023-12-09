@@ -17,6 +17,11 @@ language: GHC2021
 
 dependencies:
 - base >= 4.7 && < 5
+- containers
+- inline-c
+- inline-c-cpp
+- bytestring
+- bindings-DSL
 
 ghc-options:
 - -Wall
@@ -24,7 +29,6 @@ ghc-options:
 - -Widentities
 - -Wincomplete-record-updates
 - -Wincomplete-uni-patterns
-- -Wmissing-export-lists
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
@@ -52,6 +56,31 @@ default-extensions:
 library:
   source-dirs: src
 
+  cxx-options: -std=c++11
+
+  when:
+    - condition: os(linux)
+      extra-libraries: stdc++
+    - condition: os(darwin)
+      extra-libraries: c++
+      # See: https://ghc.haskell.org/trac/ghc/ticket/11829
+      ld-options: -Wl,-keep_dwarf_unwind
+
+  pkgconfig-depends: opencv4 >= 4.0.0
+
+executables:
+  sample:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -Werror
+    - -O2
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - opencv-imghash
+
 tests:
   opencv-imghash-test:
     main:                Spec.hs
@@ -62,8 +91,3 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - opencv-imghash
-
-
-
-
-

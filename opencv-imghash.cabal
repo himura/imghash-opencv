@@ -24,7 +24,8 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      OpenCV.C.Inline
+      OpenCV.Extra.ImgHash
   other-modules:
       Paths_opencv_imghash
   autogen-modules:
@@ -50,12 +51,27 @@ library
       RecordWildCards
       StrictData
       TypeFamilies
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  cxx-options: -std=c++11
+  pkgconfig-depends:
+      opencv4 >= 4.0.0
   build-depends:
       base >=4.7 && <5
+    , bindings-DSL
+    , bytestring
+    , containers
+    , inline-c
+    , inline-c-cpp
   default-language: GHC2021
+  if os(linux)
+    extra-libraries:
+        stdc++
+  if os(darwin)
+    extra-libraries:
+        c++
+    ld-options: -Wl,-keep_dwarf_unwind
 
-executable opencv-imghash-exe
+executable sample
   main-is: Main.hs
   other-modules:
       Paths_opencv_imghash
@@ -82,9 +98,14 @@ executable opencv-imghash-exe
       RecordWildCards
       StrictData
       TypeFamilies
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Werror -O2 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bindings-DSL
+    , bytestring
+    , containers
+    , inline-c
+    , inline-c-cpp
     , opencv-imghash
   default-language: GHC2021
 
@@ -116,8 +137,13 @@ test-suite opencv-imghash-test
       RecordWildCards
       StrictData
       TypeFamilies
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bindings-DSL
+    , bytestring
+    , containers
+    , inline-c
+    , inline-c-cpp
     , opencv-imghash
   default-language: GHC2021
