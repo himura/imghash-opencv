@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       OpenCV.C.Inline
+      OpenCV.Core.Mat
       OpenCV.Extra.ImgHash
   other-modules:
       Paths_opencv_imghash
