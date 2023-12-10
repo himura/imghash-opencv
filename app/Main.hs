@@ -9,6 +9,8 @@ main :: IO ()
 main = do
     files <- getArgs
     forM_ files $ \file -> do
-        mat <- newMatFromFile $ S8.pack file
-        phash <- computePHash mat
-        printMat phash
+        newMatFromFile (S8.pack file) >>= \case
+            Nothing -> putStrLn $ "failed to open: " ++ file
+            Just mat -> do
+                phash <- computePHash mat
+                printMat phash

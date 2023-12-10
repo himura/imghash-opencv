@@ -29,16 +29,25 @@ newEmptyMat = mask_ $ do
     let deleteMat = [C.funPtr| void deleteMat(Mat * m) { delete m; } |]
     Mat <$> newForeignPtr deleteMat ptr
 
-newMatFromFile :: S.ByteString -> IO Mat
+newMatFromFile :: S.ByteString -> IO (Maybe Mat)
 newMatFromFile bs = mask_ $ do
     ptr <-
         [CU.block|Mat*{
-          Mat* pm = new Mat();
-          *pm = imread($bs-cstr:bs);
-          return pm;
+          try {
+            Mat m = imread($bs-cstr:bs);
+            if (m.empty()) {
+              return NULL;
+            }
+            return new Mat(m);
+          } catch (const cv::Exception & e) {
+            return NULL;
+          }
         }|]
-    let deleteMat = [C.funPtr| void deleteMat(Mat * m) { delete m; } |]
-    Mat <$> newForeignPtr deleteMat ptr
+    if ptr == nullPtr
+        then return Nothing
+        else do
+            let deleteMat = [C.funPtr| void deleteMat(Mat * m) { delete m; } |]
+            Just . Mat <$> newForeignPtr deleteMat ptr
 
 withMatPtr :: Mat -> (Ptr C'Mat -> IO a) -> IO a
 withMatPtr = withForeignPtr . unMat
