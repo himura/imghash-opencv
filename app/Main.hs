@@ -1,5 +1,6 @@
 module Main where
 
+import OpenCV.Core.Mat
 import OpenCV.Extra.ImgHash
 import System.Environment
 import Control.Monad
