@@ -6,7 +6,7 @@ module OpenCV.ImgCodecs where
 import Data.Bits
 import Data.ByteString qualified as S
 import Language.C.Inline qualified as C
-import Language.C.Inline.Cpp qualified as C
+import Language.C.Inline.Cpp.Exception qualified as CE
 import OpenCV.Core.Mat qualified as Mat
 import OpenCV.Internal.InlineCpp (cvCtx)
 
@@ -14,7 +14,6 @@ C.context cvCtx
 
 C.include "opencv2/core.hpp"
 C.include "opencv2/imgcodecs.hpp"
-C.using "namespace cv"
 
 newtype ImreadModes = ImreadModes {unImreadModes :: C.CInt}
     deriving stock (Eq, Ord, Show)
@@ -52,30 +51,23 @@ imreadReducedGrayscale8 = ImreadModes 64 -- If Set, Always Convert Image To The 
 imreadReducedColor8 = ImreadModes 65 -- If Set, Always Convert Image To The 3 Channel Bgr Color Image And The Image Size Reduced 1/8.
 imreadIgnoreOrientation = ImreadModes 128 -- If set, do not rotate the image according to EXIF's orientation flag.
 
-newMatFromFile :: S.ByteString -> IO (Maybe Mat.Mat)
-newMatFromFile bs =
-    Mat.fromPtrMaybe
-        [C.block|Mat*{
-          try {
-            Mat m = imread($bs-cstr:bs);
-            if (m.empty()) {
-              return NULL;
-            }
-            return new Mat(m);
-          } catch (const cv::Exception & e) {
-            return NULL;
-          }
-        }|]
+newMatFromFile :: S.ByteString -> IO Mat.Mat
+newMatFromFile bs = do
+    mat <-
+        Mat.fromIOEitherPtr
+            [CE.tryBlock|cv::Mat*{
+              return new cv::Mat(cv::imread($bs-cstr:bs));
+            }|]
+    Mat.checkNonEmptyOrThrow "newMatFromFile: imread failed" mat
+    return mat
 
-imDecode :: S.ByteString -> ImreadModes -> IO (Maybe Mat.Mat)
+imDecode :: S.ByteString -> ImreadModes -> IO Mat.Mat
 imDecode buf (ImreadModes modes) = do
     mat <- Mat.newEmptyMat
-    (result :: C.CBool) <- Mat.withMatPtr mat $ \matPtr ->
-        [C.block|bool {
+    Mat.withMatPtr mat $ \matPtr ->
+        [CE.catchBlock|
           cv::_InputArray ia = cv::_InputArray($bs-ptr:buf, $bs-len:buf);
-          cv::imdecode(ia, $(int modes), $(Mat* matPtr));
-          return $(Mat* matPtr)->empty();
-        }|]
-    if result == 0
-        then return $ Just mat
-        else return Nothing
+          cv::imdecode(ia, $(int modes), $(cv::Mat* matPtr));
+        |]
+    Mat.checkNonEmptyOrThrow "imDecode: imdecode failed" mat
+    return mat

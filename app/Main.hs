@@ -12,16 +12,12 @@ main :: IO ()
 main = do
     files <- getArgs
     forM_ files $ \file -> do
-        newMatFromFile (S8.pack file) >>= \case
-            Nothing -> putStrLn $ "failed to open: " ++ file
-            Just mat -> do
-                phash <- computePHash mat
-                printMat phash
+        mat <- newMatFromFile (S8.pack file)
+        phash <- computePHash mat
+        printMat phash
 
     forM_ files $ \file -> do
         bs <- S.readFile file
-        imDecode bs imreadUnchanged >>= \case
-            Nothing -> putStrLn $ "failed to open: " ++ file
-            Just mat -> do
-                phash <- computePHash mat
-                printMat phash
+        mat <- imDecode bs imreadUnchanged
+        phash <- computePHash mat
+        printMat phash
