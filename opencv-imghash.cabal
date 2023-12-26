@@ -24,9 +24,10 @@ source-repository head
 
 library
   exposed-modules:
-      OpenCV.C.Inline
       OpenCV.Core.Mat
       OpenCV.Extra.ImgHash
+      OpenCV.ImgCodecs
+      OpenCV.Internal.InlineCpp
   other-modules:
       Paths_opencv_imghash
   autogen-modules:

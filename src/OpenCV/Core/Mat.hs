@@ -4,12 +4,15 @@
 module OpenCV.Core.Mat where
 
 import Control.Exception (mask_)
-import Data.ByteString qualified as S
 import Foreign.ForeignPtr
-import Foreign.Ptr
+    ( ForeignPtr
+    , newForeignPtr
+    , withForeignPtr
+    )
+import Foreign.Ptr (Ptr, nullPtr)
 import Language.C.Inline qualified as C
 import Language.C.Inline.Cpp qualified as C
-import OpenCV.C.Inline
+import OpenCV.Internal.InlineCpp (C'Mat, cvCtx)
 
 C.context cvCtx
 
@@ -39,21 +42,6 @@ fromPtrMaybe ioPtr = mask_ $ do
     if ptr == nullPtr
         then return Nothing
         else Just <$> unsafeFromPtr ptr
-
-newMatFromFile :: S.ByteString -> IO (Maybe Mat)
-newMatFromFile bs =
-    fromPtrMaybe
-        [C.block|Mat*{
-          try {
-            Mat m = imread($bs-cstr:bs);
-            if (m.empty()) {
-              return NULL;
-            }
-            return new Mat(m);
-          } catch (const cv::Exception & e) {
-            return NULL;
-          }
-        }|]
 
 withMatPtr :: Mat -> (Ptr C'Mat -> IO a) -> IO a
 withMatPtr = withForeignPtr . unMat

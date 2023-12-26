@@ -1,15 +1,15 @@
 {-# LANGUAGE TemplateHaskellQuotes #-}
 
-module OpenCV.C.Inline where
+module OpenCV.Internal.InlineCpp where
 
 import Data.Map qualified as M
 import Language.C.Inline qualified as C
 import Language.C.Inline.Context qualified as C
-import Language.C.Inline.Cpp qualified as C
+import Language.C.Inline.Cpp qualified as CC
 import Language.C.Types qualified as C
 
 cvCtx :: C.Context
-cvCtx = C.cppCtx <> C.bsCtx <> C.vecCtx <> ctx
+cvCtx = CC.cppCtx <> C.bsCtx <> C.vecCtx <> ctx
   where
     ctx = mempty{C.ctxTypesTable = cvTypesTable}
 
