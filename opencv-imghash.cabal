@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      HNSW.Core
       OpenCV.Core.Mat
       OpenCV.Extra.ImgHash
       OpenCV.ImgCodecs

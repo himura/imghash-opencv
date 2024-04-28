@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   }
 
   const int dim = 8;
-  const int numNeighbors = 3;
+  const int numNeighbors = 10;
 
   const std::string hnsw_path = "hnsw.bin";
 

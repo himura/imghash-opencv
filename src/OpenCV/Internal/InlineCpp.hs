@@ -3,6 +3,7 @@
 module OpenCV.Internal.InlineCpp
     ( cvCtx
     , C'Mat
+    , C'HierarchicalNSW
     , OpenCVException (..)
     ) where
 
@@ -15,11 +16,13 @@ cvCtx :: C.Context
 cvCtx = CC.cppCtx <> C.bsCtx <> C.vecCtx <> cvCppTypesTableCtx
 
 data C'Mat
+data C'HierarchicalNSW a
 
 cvCppTypesTableCtx :: C.Context
 cvCppTypesTableCtx =
     CC.cppTypePairs
         [ ("cv::Mat", [t|C'Mat|])
+        , ("hnswlib::HierarchicalNSW", [t|C'HierarchicalNSW|])
         ]
 
 data OpenCVException
